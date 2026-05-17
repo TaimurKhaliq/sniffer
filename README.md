@@ -1,6 +1,6 @@
 # Sniffer
 
-Sniffer is a context-aware UI QA agent. It is designed to understand what a UI is trying to help a user do, execute the app with Playwright, and report likely real product/UI bugs with evidence.
+Sniffer is a standalone context-aware UI QA agent. Run commands from the Sniffer repository root; point `--repo` at any UI project you want to audit. It is designed to understand what a UI is trying to help a user do, execute the app with Playwright, and report likely real product/UI bugs with evidence.
 
 It is not a dumb crawler. The current architecture is evidence-first and LLM-centered when an LLM is configured:
 
@@ -18,7 +18,9 @@ Sniffer does not perform destructive actions by default.
 
 ```bash
 npm install
+npm --prefix ui install
 npm run build
+npm --prefix ui run build
 ```
 
 ## Sniffer Dashboard UI
@@ -96,28 +98,28 @@ The local server records each dashboard run with `queued`, `running`, `succeeded
 ## Commands
 
 ```bash
-npm run sniffer -- init-project --id workspace-control --name "Workspace Control" --repo ../web --url http://localhost:3000
+npm run sniffer -- init-project --id sample-ui --name "Sample UI" --repo /path/to/ui-repo --url http://localhost:3000
 npm run sniffer -- projects list
-npm run sniffer -- projects inspect --id workspace-control
-npm run sniffer -- projects remove --id workspace-control
+npm run sniffer -- projects inspect --id sample-ui
+npm run sniffer -- projects remove --id sample-ui
 npm run sniffer -- inspect-url --url http://localhost:3000
-npm run sniffer -- inspect-url --project workspace-control
-npm run sniffer -- discover --project workspace-control
-npm run sniffer -- crawl --project workspace-control
-npm run sniffer -- audit --project workspace-control --discovery-mode hybrid --scenario all
+npm run sniffer -- inspect-url --project sample-ui
+npm run sniffer -- discover --project sample-ui
+npm run sniffer -- crawl --project sample-ui
+npm run sniffer -- audit --project sample-ui --discovery-mode hybrid --scenario all
 npm run sniffer -- audit --project sample-app --discovery-mode hybrid --scenario all --execute-generated-scenarios
-npm run sniffer -- discover --repo ../web
+npm run sniffer -- discover --repo /path/to/ui-repo
 npm run sniffer -- crawl --url http://localhost:3000
-npm run sniffer -- audit --repo ../web --url http://localhost:3000 --discovery-mode hybrid
-npm run sniffer -- audit --repo ../web --url http://localhost:3000 --scenario all --ux-critic deterministic
-npm run sniffer -- audit --repo ../web --url http://localhost:3000 --scenario generate-plan-bundle
-npm run sniffer -- audit --repo ../web --url http://localhost:3000 --critic-mode deterministic
-npm run sniffer -- audit --repo ../web --url http://localhost:3000 --scenario all --execute-generated-scenarios --provider openai-compatible --product-experience-critic llm
+npm run sniffer -- audit --repo /path/to/ui-repo --url http://localhost:3000 --discovery-mode hybrid
+npm run sniffer -- audit --repo /path/to/ui-repo --url http://localhost:3000 --scenario all --ux-critic deterministic
+npm run sniffer -- audit --repo /path/to/ui-repo --url http://localhost:3000 --scenario generate-plan-bundle
+npm run sniffer -- audit --repo /path/to/ui-repo --url http://localhost:3000 --critic-mode deterministic
+npm run sniffer -- audit --repo /path/to/ui-repo --url http://localhost:3000 --scenario all --execute-generated-scenarios --provider openai-compatible --product-experience-critic llm
 npm run sniffer -- generate-fixes --report reports/sniffer/latest/latest_report.json
 npm run sniffer -- apply-fix --issue <issue_id> --report reports/sniffer/latest/latest_report.json --agent manual
 npm run sniffer -- verify --issue <issue_id> --url http://localhost:3000 --report reports/sniffer/latest/latest_report.json
-npm run sniffer -- repair-loop --repo ../web --url http://localhost:3000 --agent manual --max-iterations 3
-npm run sniffer -- generate-tests --repo ../web --url http://localhost:3000
+npm run sniffer -- repair-loop --repo /path/to/ui-repo --url http://localhost:3000 --agent manual --max-iterations 3
+npm run sniffer -- generate-tests --repo /path/to/ui-repo --url http://localhost:3000
 npm run sniffer -- run-tests
 npm run sniffer -- audit-product-calibration --product-experience-critic deterministic
 ```
@@ -136,9 +138,9 @@ Register a project:
 
 ```bash
 npm run sniffer -- init-project \
-  --id workspace-control \
-  --name "Workspace Control" \
-  --repo /path/to/workspace-control/web \
+  --id sample-ui \
+  --name "Sample UI" \
+  --repo /path/to/ui-repo \
   --url http://127.0.0.1:5173
 ```
 
@@ -146,9 +148,9 @@ Then run project-aware commands:
 
 ```bash
 npm run sniffer -- projects list
-npm run sniffer -- discover --project workspace-control
-npm run sniffer -- crawl --project workspace-control
-npm run sniffer -- audit --project workspace-control --scenario all
+npm run sniffer -- discover --project sample-ui
+npm run sniffer -- crawl --project sample-ui
+npm run sniffer -- audit --project sample-ui --scenario all
 ```
 
 Direct mode still works:
@@ -412,7 +414,7 @@ npm run sniffer -- verify-matrix
 
 The matrix currently covers:
 
-- `workspace-control-web`: the workspace-control React/Vite app, when `http://127.0.0.1:5173` is reachable.
+- `workspace-control-web`: optional external workspace-control React/Vite app when `SNIFFER_MATRIX_WORKSPACE_REPO` points to it and `http://127.0.0.1:5173` is reachable.
 - `sample-angular-app`: `/Users/taimurkhaliq/ai_projects/angular-realworld-example-app`, when `http://localhost:4200` is reachable.
 - `tiny-react-fixture`: a self-contained React/Vite source fixture served by the matrix runner.
 - `static-html-fixture`: a self-contained static HTML/template fixture served by the matrix runner.
@@ -421,6 +423,7 @@ The matrix currently covers:
 External target URLs can be overridden:
 
 ```bash
+SNIFFER_MATRIX_WORKSPACE_REPO=/path/to/workspace-control/web \
 SNIFFER_MATRIX_WORKSPACE_URL=http://127.0.0.1:5173 \
 SNIFFER_MATRIX_ANGULAR_REPO=/path/to/angular-app \
 SNIFFER_MATRIX_ANGULAR_URL=http://localhost:4200 \
@@ -711,7 +714,7 @@ Dogfood Sniffer on the dashboard:
 ```bash
 npm run sniffer -- providers check --provider openai-compatible
 npm run sniffer -- audit \
-  --repo /Users/taimurkhaliq/ai_projects/stackpilot-workspace/workspace-control/sniffer/ui \
+  --repo /Users/taimurkhaliq/ai_projects/sniffer \
   --url http://127.0.0.1:4877 \
   --scenario all \
   --execute-generated-scenarios \
@@ -1051,9 +1054,9 @@ Repair attempts record git status before, git diff after, commands run, agent ou
 
 Repair root and path safety:
 
-- `repo_path` remains the scanned repo, such as `workspace-control/web`.
+- `repo_path` remains the scanned repo, such as `/path/to/ui-repo`.
 - `repair_root` is inferred from suspected files. If a fix needs `../server`, repair root becomes the parent project root.
-- `allowed_paths` constrains modifications. For workspace-control learning-status issues, Sniffer allows `server/` and `web/src/`.
+- `allowed_paths` constrains modifications to the relevant app/support paths for the scanned repo.
 - Any new changed file outside `repair_root` or outside `allowed_paths` is blocked.
 
 ## Generated Tests

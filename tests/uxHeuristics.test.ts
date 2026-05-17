@@ -68,7 +68,7 @@ describe('UX heuristics', () => {
     const result = analyzeUxSnapshot({
       elements: [
         element({
-          text: 'REPORT CONTEXT Ad hoc report Selected run: Latest report Generated 5/7/2026 App URL http://127.0.0.1:4877/ Repo /Users/demo/ai_proj…workspace-control/sniffer/ui Scenarios 11/11 passed Issues 5 Screenshots 56'
+          text: 'REPORT CONTEXT Ad hoc report Selected run: Latest report Generated 5/7/2026 App URL http://127.0.0.1:4877/ Repo /Users/demo/ai_proj…sniffer/ui Scenarios 11/11 passed Issues 5 Screenshots 56'
         })
       ],
       ids: [],
@@ -81,7 +81,7 @@ describe('UX heuristics', () => {
   })
 
   it('flags an actual long untruncated local path token', () => {
-    const longPath = '/Users/demo/ai_projects/stackpilot-workspace/workspace-control/sniffer/reports/sniffer/ad_hoc/latest/screenshots/generated-scenarios/navigation-smoke-nav-1.png'
+    const longPath = '/Users/demo/ai_projects/sniffer/reports/sniffer/ad_hoc/latest/screenshots/generated-scenarios/navigation-smoke-nav-1.png'
     const result = analyzeUxSnapshot({
       elements: [element({ text: `Screenshot path ${longPath}` })],
       ids: [],

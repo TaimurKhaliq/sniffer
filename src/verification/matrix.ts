@@ -174,7 +174,7 @@ async function buildMatrixTargets(baseDir: string, cleanup: Array<() => Promise<
   const workspaceControl = {
     id: 'workspace-control-web',
     name: 'Workspace Control Web',
-    repoPath: path.resolve(baseDir, '..', 'web'),
+    repoPath: process.env.SNIFFER_MATRIX_WORKSPACE_REPO ?? path.resolve(baseDir, '..', 'workspace-control', 'web'),
     appUrl: process.env.SNIFFER_MATRIX_WORKSPACE_URL ?? 'http://127.0.0.1:5173',
     expectedFramework: 'react',
     expectedProfiles: ['planning_control_panel'],

@@ -4,12 +4,12 @@ import { resolveRepairPathPolicy } from '../src/repair/pathPolicy.js'
 describe('resolveRepairPathPolicy', () => {
   it('infers project repair root from web repo with backend suspects', () => {
     const policy = resolveRepairPathPolicy({
-      repoPath: '/Users/example/workspace-control/web',
+      repoPath: '/Users/example/product/web',
       suspectedFiles: ['../server/app.py', '../server/routes/learning.py', 'src/api.ts'],
-      reportDir: '/Users/example/workspace-control/sniffer/reports/sniffer/latest'
+      reportDir: '/Users/example/product/sniffer/reports/sniffer/latest'
     })
 
-    expect(policy.repairRoot).toBe('/Users/example/workspace-control')
+    expect(policy.repairRoot).toBe('/Users/example/product')
     expect(policy.allowedPaths).toEqual(expect.arrayContaining([
       'server/',
       'web/src/',

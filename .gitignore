@@ -5,3 +5,6 @@ reports/
 .env
 playwright-report/
 test-results/
+ui/dist/
+coverage/
+.DS_Store
